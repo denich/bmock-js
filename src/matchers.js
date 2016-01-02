@@ -3,12 +3,12 @@ var _ = require('lodash');
 module.exports = {
   inList: inList,
   contain: contain,
-  compare: compare,
+  equal: equal,
   count: count
 };
 
 function count(value) {
-  return _.flow(_.property('length'), compare(value));
+  return _.flow(_.property('length'), equal(value));
 }
 
 function inList(valueArray) {
@@ -19,6 +19,6 @@ function contain(value) {
   return _.partial(_.includes, _, value);
 }
 
-function compare(value) {
+function equal(value) {
   return _.partial(_.isEqual, value);
 }
