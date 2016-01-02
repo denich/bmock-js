@@ -8,7 +8,7 @@ module.exports = {
 };
 
 function count(value) {
-  return _.flow(_.property('length'), equal(value));
+  return _.flow(_.size, equal(value));
 }
 
 function inList(valueArray) {
