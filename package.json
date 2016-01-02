@@ -1,0 +1,19 @@
+{
+  "name": "mock-backend-js",
+  "version": "1.0.0",
+  "description": "Mock backend oh js",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "keywords": [
+    "backend",
+    "mock",
+    "js"
+  ],
+  "author": "denich",
+  "license": "ISC",
+  "dependencies": {
+    "lodash": "^3.10.1"
+  }
+}
