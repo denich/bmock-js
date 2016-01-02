@@ -5,10 +5,10 @@ module.exports = {
   queryProp: queryProp
 };
 
-function bodyProp(propPath, condition) {
-  return _.flow(_.property('body'), _.property(propPath), condition);
+function bodyProp(propPath) {
+  return _.flow(_.property('body'), _.property(propPath));
 }
 
-function queryProp(propPath, condition) {
-  return _.flow(_.property('query'), _.property(propPath), condition);
+function queryProp(propPath) {
+  return _.flow(_.property('query'), _.property(propPath));
 }

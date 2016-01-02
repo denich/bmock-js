@@ -6,10 +6,8 @@ module.exports = {
   suite: suite
 };
 
-function mark(marker, condition) {
-  return function(req) {
-    return condition(req) && marker;
-  };
+function mark(marker, getter, condition) {
+  return _.flow(getter, condition || _.identity, truthyResult(marker));
 }
 
 function markBy(getter) {
@@ -30,5 +28,11 @@ function suite() {
     });
 
     return result;
+  };
+}
+
+function truthyResult(result) {
+  return function(isTruthy) {
+    return isTruthy ? result : null;
   };
 }
