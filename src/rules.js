@@ -1,9 +1,9 @@
 var _ = require('lodash');
 
-module.exports = {
-  mark: mark,
-  markBy: markBy,
-  suite: suite
+export default {
+  mark,
+  markBy,
+  suite
 };
 
 function mark(marker, getter, condition) {

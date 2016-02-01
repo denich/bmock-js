@@ -1,24 +1,29 @@
-var _ = require('lodash');
+const size = require('lodash/collection/size');
+const includes = require('lodash/collection/includes');
+const flow = require('lodash/function/flow');
+const partial = require('lodash/function/partial');
+const partialRight = require('lodash/function/partialRight');
+const isEqual = require('lodash/lang/isEqual');
 
-module.exports = {
-  inList: inList,
-  contain: contain,
-  equal: equal,
-  count: count
+export default {
+  inList,
+  contain,
+  equal,
+  count
 };
 
 function count(value) {
-  return _.flow(_.size, equal(value));
+  return flow(size, equal(value));
 }
 
 function inList(valueArray) {
-  return _.partial(_.includes, valueArray);
+  return partial(includes, valueArray);
 }
 
 function contain(value) {
-  return _.partial(_.includes, _, value);
+  return partialRight(includes, value);
 }
 
 function equal(value) {
-  return _.partial(_.isEqual, value);
+  return partial(isEqual, value);
 }
