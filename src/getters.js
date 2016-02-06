@@ -1,5 +1,5 @@
-var property = require('lodash/utility/property');
-var flow = require('lodash/function/flow');
+import property from 'lodash/utility/property';
+import flow from 'lodash/function/flow';
 
 export default {
   bodyProp: bodyProp,

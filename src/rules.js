@@ -1,4 +1,6 @@
-var _ = require('lodash');
+import flow from 'lodash/function/flow';
+import find from 'lodash/collection/find';
+import toArray from 'lodash/lang/toArray';
 
 export default {
   mark,
@@ -7,7 +9,7 @@ export default {
 };
 
 function mark(marker, getter, condition) {
-  return _.flow(getter, condition || _.identity, truthyResult(marker));
+  return flow(getter, condition, truthyResult(marker));
 }
 
 function markBy(getter) {
@@ -17,13 +19,13 @@ function markBy(getter) {
 }
 
 function suite() {
-  var matchers = _.toArray(arguments);
+  var rules = toArray(arguments);
 
   return function(req) {
     var result = null;
 
-    _.find(matchers, function(matcher) {
-      result = matcher(req);
+    find(rules, function(rule) {
+      result = rule(req);
       return result;
     });
 

@@ -1,9 +1,9 @@
-const size = require('lodash/collection/size');
-const includes = require('lodash/collection/includes');
-const flow = require('lodash/function/flow');
-const partial = require('lodash/function/partial');
-const partialRight = require('lodash/function/partialRight');
-const isEqual = require('lodash/lang/isEqual');
+import size from 'lodash/collection/size';
+import includes from 'lodash/collection/includes';
+import flow from 'lodash/function/flow';
+import partial from 'lodash/function/partial';
+import partialRight from 'lodash/function/partialRight';
+import isEqual from 'lodash/lang/isEqual';
 
 export default {
   inList,
