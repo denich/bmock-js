@@ -1,8 +1,6 @@
 import chai from 'chai';
 import lib from '../lib/mock-backend';
 
-chai.expect();
-
 const expect = chai.expect;
 var matchers;
 

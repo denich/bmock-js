@@ -1,5 +1,6 @@
 var webpack = require('webpack');
 var UglifyJsPlugin = webpack.optimize.UglifyJsPlugin;
+var RewirePlugin = require('rewire-webpack');
 var path = require('path');
 var env = require('yargs').argv.mode;
 
@@ -11,6 +12,7 @@ if (env === 'build') {
   plugins.push(new UglifyJsPlugin({ minimize: true }));
   outputFile = libraryName + '.min.js';
 } else {
+  plugins.push(new RewirePlugin());
   outputFile = libraryName + '.js';
 }
 
@@ -41,6 +43,9 @@ var config = {
   resolve: {
     root: path.resolve('./src'),
     extensions: ['', '.js']
+  },
+  node: {
+    fs: 'empty'
   },
   plugins: plugins
 };

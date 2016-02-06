@@ -1,11 +1,11 @@
 import chai from 'chai';
-import spies from 'chai-spies';
+import sinon from 'sinon';
+import sinonChai from 'sinon-chai';
 import lib from '../lib/mock-backend';
 import identity from 'lodash/utility/identity';
 import constant from 'lodash/utility/constant';
 
-chai.expect();
-chai.use(spies);
+chai.use(sinonChai);
 
 const expect = chai.expect;
 var rules;
@@ -23,13 +23,13 @@ describe('Rules', function() {
     });
 
     it('will pass getter result to the condition', function() {
-      var condition = chai.spy();
+      var condition = sinon.spy();
       var value = 'value';
       var sut = mark('whatever', req => req.prop, condition);
 
       sut({ prop: value });
 
-      expect(condition).to.have.been.called.with(value);
+      expect(condition).to.have.been.calledWith(value);
     });
 
     it('will return marker if condition returns truthy', function() {
