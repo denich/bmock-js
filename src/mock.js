@@ -1,12 +1,20 @@
 import noop from 'lodash/utility/noop';
 import isFunction from 'lodash/lang/isFunction';
+import merge from 'lodash/object/merge';
 var fs = require('fs');
 
-var BASE_RESPONSE_DIR = './mock-data';
+var _config = {
+  responseDir: './mock-data'
+};
 
 export default {
-  response: response
+  response: response,
+  config: config
 };
+
+function config(params) {
+  _config = merge(_config, params);
+}
 
 function response(command, rules) {
   return function(req, res) {
@@ -43,6 +51,6 @@ function toCommandName(command, req) {
 }
 
 function getResponsePath(fileName) {
-  return BASE_RESPONSE_DIR + '/' + fileName + '.json';
+  return _config.responseDir + '/' + fileName + '.json';
 }
 
