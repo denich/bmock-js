@@ -50,7 +50,7 @@ describe('Mock', function() {
       const command = 'command';
       const rules = constant('mark');
 
-      mockReadFile(sinon.mock().withArgs('./mock-data/command-mark.json'));
+      mockReadFile(sinon.mock().withArgs('./data/command-mark.json'));
 
       mock.response(command, rules)(req, res);
     });
@@ -61,7 +61,7 @@ describe('Mock', function() {
       const command = property('prop');
       const rules = noop;
 
-      mockReadFile(sinon.mock().withArgs('./mock-data/req-value.json'));
+      mockReadFile(sinon.mock().withArgs('./data/req-value.json'));
 
       mock.response(command, rules)(req, res);
     });
@@ -72,7 +72,7 @@ describe('Mock', function() {
       const command = 'command';
       const rules = { command: constant('mark') };
 
-      mockReadFile(sinon.mock().withArgs('./mock-data/command-mark.json'));
+      mockReadFile(sinon.mock().withArgs('./data/command-mark.json'));
 
       mock.response(command, rules)(req, res);
     });

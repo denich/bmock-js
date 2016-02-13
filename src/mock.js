@@ -4,7 +4,7 @@ import merge from 'lodash/object/merge';
 var fs = require('fs');
 
 var _config = {
-  responseDir: './mock-data'
+  responseDir: './data'
 };
 
 export default {
@@ -18,7 +18,7 @@ function config(params) {
 
 function response(command, rules) {
   return function(req, res) {
-    res.json(getResponse(req, toCommandName(command, req), rules));
+    res.json(JSON.parse(getResponse(req, toCommandName(command, req), rules)));
   };
 }
 
