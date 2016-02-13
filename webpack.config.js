@@ -1,37 +1,28 @@
 var webpack = require('webpack');
-var UglifyJsPlugin = webpack.optimize.UglifyJsPlugin;
 var RewirePlugin = require('rewire-webpack');
 var path = require('path');
 var env = require('yargs').argv.mode;
+var fs = require('fs');
 
-var libraryName = 'mock-backend';
+const libraryName = 'mock-backend';
 
-var plugins = [], outputFile;
-
-if (env === 'build') {
-  plugins.push(new UglifyJsPlugin({ minimize: true }));
-  outputFile = libraryName + '.min.js';
-} else {
-  plugins.push(new RewirePlugin());
-  outputFile = libraryName + '.js';
-}
-
-var config = {
-  entry: __dirname + '/src/index.js',
+module.exports = {
+  entry: './src/index.js',
+  target: 'node',
   devtool: 'source-map',
   output: {
-    path: __dirname + '/lib',
-    filename: outputFile,
+    path: path.join(__dirname, '/lib'),
+    filename: outputFileName(env, libraryName),
     library: libraryName,
-    libraryTarget: 'umd',
-    umdNamedDefine: true
+    libraryTarget: 'commonjs2'
   },
+  externals: externals(),
   module: {
     loaders: [
       {
-        test: /(\.jsx|\.js)$/,
+        test: /(\.js)$/,
         loader: 'babel',
-        exclude: /(node_modules|bower_components)/
+        exclude: /(node_modules)/
       },
       {
         test: /(\.jsx|\.js)$/,
@@ -40,14 +31,42 @@ var config = {
       }
     ]
   },
-  resolve: {
-    root: path.resolve('./src'),
-    extensions: ['', '.js']
-  },
-  node: {
-    fs: 'empty'
-  },
-  plugins: plugins
+  plugins: plugins(env)
 };
 
-module.exports = config;
+function plugins(env) {
+  var plugins = [
+    new webpack.BannerPlugin('require("source-map-support").install();',
+      {
+        raw: true,
+        entryOnly: false
+      })
+  ];
+
+  if (env === 'build') {
+    plugins.push(new webpack.optimize.UglifyJsPlugin({ minimize: true }));
+  } else {
+    plugins.push(new RewirePlugin());
+  }
+
+  return plugins;
+}
+
+function externals() {
+  var nodeModules = {};
+
+  fs.readdirSync('node_modules')
+    .filter(function(x) {
+      return ['.bin'].indexOf(x) === -1;
+    })
+    .forEach(function(mod) {
+      nodeModules[mod] = 'commonjs ' + mod;
+    });
+
+  return nodeModules;
+}
+
+function outputFileName(env, libraryName) {
+  return env === 'build' ? libraryName + '.min.js' : libraryName + '.js';
+}
+
