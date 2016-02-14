@@ -4,7 +4,7 @@ var path = require('path');
 var env = require('yargs').argv.mode;
 var fs = require('fs');
 
-const libraryName = 'mock-backend';
+const libraryName = 'bmock';
 
 module.exports = {
   entry: './src/index.js',
