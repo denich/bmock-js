@@ -1,7 +1,7 @@
 {
-  "name": "mock-backend-js",
+  "name": "bmock-js",
   "version": "0.1.0",
-  "description": "Mock backend for js",
+  "description": "Mock backend on js",
   "main": "index.js",
   "scripts": {
     "build": "webpack --mode=build",
@@ -14,7 +14,7 @@
     "js"
   ],
   "author": "denich",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "lodash": "^3.10.1"
   },
