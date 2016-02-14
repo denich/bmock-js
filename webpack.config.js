@@ -11,7 +11,7 @@ module.exports = {
   target: 'node',
   devtool: 'source-map',
   output: {
-    path: path.join(__dirname, '/lib'),
+    path: path.join(__dirname, '/dist'),
     filename: outputFileName(env, libraryName),
     library: libraryName,
     libraryTarget: 'commonjs2'

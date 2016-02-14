@@ -1,28 +1,23 @@
 import chai from 'chai';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
-import lib from '../lib/mock-backend';
+import rules from '../src/rules';
 import identity from 'lodash/utility/identity';
 import constant from 'lodash/utility/constant';
 
 chai.use(sinonChai);
 
 const expect = chai.expect;
-var rules;
 
-describe('Rules', function() {
-  before(function() {
-    rules = lib.rules;
-  });
-
-  describe('mark', function() {
+describe('Rules', () => {
+  describe('mark', () => {
     var mark;
 
-    before(function() {
+    before(() => {
       mark = rules.mark;
     });
 
-    it('will pass getter result to the condition', function() {
+    it('will pass getter result to the condition', () => {
       var condition = sinon.spy();
       var value = 'value';
       var sut = mark('whatever', req => req.prop, condition);
@@ -32,7 +27,7 @@ describe('Rules', function() {
       expect(condition).to.have.been.calledWith(value);
     });
 
-    it('will return marker if condition returns truthy', function() {
+    it('will return marker if condition returns truthy', () => {
       var marker = 'marker';
       var req = {};
 
@@ -41,7 +36,7 @@ describe('Rules', function() {
       expect(sut(req)).to.be.equal(marker);
     });
 
-    it('will return null if condition returns falsy', function() {
+    it('will return null if condition returns falsy', () => {
       const req = {};
 
       const sut = mark('marker', identity, constant(false));
@@ -50,14 +45,14 @@ describe('Rules', function() {
     });
   });
 
-  describe('mark by', function() {
+  describe('mark by', () => {
     var markBy;
 
-    before(function() {
+    before(() => {
       markBy = rules.markBy;
     });
 
-    it('will return getter result', function() {
+    it('will return getter result', () => {
       var value = 'value';
       var req = {
         prop: value
@@ -69,14 +64,14 @@ describe('Rules', function() {
     });
   });
 
-  describe('suite', function() {
+  describe('suite', () => {
     var suite;
 
-    before(function() {
+    before(() => {
       suite = rules.suite;
     });
 
-    it('will return result of first matched rules', function() {
+    it('will return result of first matched rules', () => {
       var rule1 = constant(null);
       var rule2 = constant('marker2');
       var rule3 = constant('marker3');

@@ -1,15 +1,11 @@
 import chai from 'chai';
-import lib from '../lib/mock-backend';
+import getters from '../src/getters';
 
 const expect = chai.expect;
-var getters;
 
-describe('Getters', function() {
-  before(function() {
-    getters = lib.getters;
-  });
+describe('Getters', () => {
 
-  describe('body property', function() {
+  describe('body property', () => {
     it('will return req body property value', () => {
       var req = {
         body: {
@@ -21,8 +17,8 @@ describe('Getters', function() {
     });
   });
 
-  describe('query property', function() {
-    it('will return query property value', function() {
+  describe('query property', () => {
+    it('will return query property value', () => {
       var req = {
         query: {
           prop: 'value'
@@ -33,8 +29,8 @@ describe('Getters', function() {
     });
   });
 
-  describe('parameter', function() {
-    it('will return parameter value', function() {
+  describe('parameter', () => {
+    it('will return parameter value', () => {
       var req = {
         params: {
           name: 'value'
