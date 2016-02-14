@@ -276,10 +276,7 @@
         "nonwords": false
       }
     ],
-    "spaced-comment": [
-      2,
-      "always"
-    ],
+    "spaced-comment": 0,
     "strict": 0,
     "use-isnan": 2,
     "valid-jsdoc": 0,

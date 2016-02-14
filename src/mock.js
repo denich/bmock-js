@@ -1,6 +1,7 @@
 import noop from 'lodash/utility/noop';
 import isFunction from 'lodash/lang/isFunction';
 import merge from 'lodash/object/merge';
+var path = require('path');
 var fs = require('fs');
 
 var _config = {
@@ -51,6 +52,6 @@ function toCommandName(command, req) {
 }
 
 function getResponsePath(fileName) {
-  return _config.responseDir + '/' + fileName + '.json';
+  return path.join(_config.responseDir, fileName + '.json');
 }
 

@@ -19,9 +19,15 @@ describe('Mock', function() {
   });
 
   describe('response', function() {
+    var fileData;
+
+    before(function() {
+      fileData = { response: 'response' };
+    });
+
     function mockReadFile(readFileSync) {
       const mockFs = {
-        readFileSync: readFileSync
+        readFileSync: readFileSync.returns(JSON.stringify(fileData))
       };
 
       mock.__set__('fs', mockFs);
@@ -32,15 +38,13 @@ describe('Mock', function() {
     }
 
     it('will respond with read file data', function() {
-      const fileData = 'file data';
       const req = {};
       const res = stubJsonRes();
       const command = 'command';
       const rules = noop;
 
-      mockReadFile(sinon.stub().returns(fileData));
+      mockReadFile(sinon.stub());
       mock.response(command, rules)(req, res);
-
       expect(res.json).to.have.been.calledWith(fileData);
     });
 
@@ -50,7 +54,7 @@ describe('Mock', function() {
       const command = 'command';
       const rules = constant('mark');
 
-      mockReadFile(sinon.mock().withArgs('./data/command-mark.json'));
+      mockReadFile(sinon.mock().withArgs(sinon.match('command-mark.json')));
 
       mock.response(command, rules)(req, res);
     });
@@ -61,7 +65,7 @@ describe('Mock', function() {
       const command = property('prop');
       const rules = noop;
 
-      mockReadFile(sinon.mock().withArgs('./data/req-value.json'));
+      mockReadFile(sinon.mock().withArgs(sinon.match('req-value.json')));
 
       mock.response(command, rules)(req, res);
     });
@@ -72,7 +76,7 @@ describe('Mock', function() {
       const command = 'command';
       const rules = { command: constant('mark') };
 
-      mockReadFile(sinon.mock().withArgs('./data/command-mark.json'));
+      mockReadFile(sinon.mock().withArgs(sinon.match('command-mark.json')));
 
       mock.response(command, rules)(req, res);
     });
@@ -84,7 +88,7 @@ describe('Mock', function() {
       const rules = constant('mark');
 
       mock.config({ responseDir: './another-response-dir' });
-      mockReadFile(sinon.mock().withArgs('./another-response-dir/command-mark.json'));
+      mockReadFile(sinon.mock().withArgs(sinon.match('another-response-dir/')));
 
       mock.response(command, rules)(req, res);
     });
