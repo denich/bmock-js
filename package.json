@@ -16,7 +16,8 @@
   "author": "denich",
   "license": "MIT",
   "dependencies": {
-    "lodash": "^3.10.1"
+    "lodash": "^3.10.1",
+    "source-map-support": "^0.4.0"
   },
   "repository": {
     "type": "git",
