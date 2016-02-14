@@ -1,1 +1,1 @@
-module.exports = require('dist/bmock');
+module.exports = require('./dist/bmock');
