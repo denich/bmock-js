@@ -1,21 +1,11 @@
-import noop from 'lodash/utility/noop';
-import isFunction from 'lodash/lang/isFunction';
-import merge from 'lodash/object/merge';
+import _ from 'lodash';
+var config = require('./config');
 var path = require('path');
 var fs = require('fs');
 
-var _config = {
-  responseDir: './data'
-};
-
 export default {
-  response: response,
-  config: config
+  response: response
 };
-
-function config(params) {
-  _config = merge(_config, params);
-}
 
 function response(command, rules) {
   return function(req, res) {
@@ -36,11 +26,11 @@ function getMark(rules, commandName, req) {
 }
 
 function getRule(rules, commandName) {
-  if (isFunction(rules)) {
+  if (_.isFunction(rules)) {
     return rules;
   }
 
-  return rules[commandName] || noop;
+  return rules[commandName] || _.noop;
 }
 
 function makePostfix(mark) {
@@ -48,10 +38,10 @@ function makePostfix(mark) {
 }
 
 function toCommandName(command, req) {
-  return isFunction(command) ? command(req) : command;
+  return _.isFunction(command) ? command(req) : command;
 }
 
 function getResponsePath(fileName) {
-  return path.join(_config.responseDir, fileName + '.json');
+  return path.join(config().responseDir, fileName + '.json');
 }
 

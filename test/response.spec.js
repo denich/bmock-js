@@ -12,10 +12,10 @@ chai.use(sinonChai);
 const expect = chai.expect;
 
 describe('Mock', function() {
-  var mock;
+  var response;
 
   before(function() {
-    mock = rewire('../src/mock');
+    response = rewire('../src/response');
   });
 
   describe('response', function() {
@@ -30,7 +30,7 @@ describe('Mock', function() {
         readFileSync: readFileSync.returns(JSON.stringify(fileData))
       };
 
-      mock.__set__('fs', mockFs);
+      response.__set__('fs', mockFs);
     }
 
     function stubJsonRes() {
@@ -44,8 +44,20 @@ describe('Mock', function() {
       const rules = noop;
 
       mockReadFile(sinon.stub());
-      mock.response(command, rules)(req, res);
+      response.response(command, rules)(req, res);
       expect(res.json).to.have.been.calledWith(fileData);
+    });
+
+    it('will use config base directory for file path', function() {
+      const req = {};
+      const res = stubJsonRes();
+      const command = 'command';
+      const rules = constant('mark');
+
+      response.__set__('config', sinon.stub().returns({ responseDir: 'responseDir' }));
+      mockReadFile(sinon.mock().withArgs(sinon.match('responseDir')));
+
+      response.response(command, rules)(req, res);
     });
 
     it('will combine file name as command and mark', function() {
@@ -56,7 +68,7 @@ describe('Mock', function() {
 
       mockReadFile(sinon.mock().withArgs(sinon.match('command-mark.json')));
 
-      mock.response(command, rules)(req, res);
+      response.response(command, rules)(req, res);
     });
 
     it('will support command name as function', function() {
@@ -67,7 +79,7 @@ describe('Mock', function() {
 
       mockReadFile(sinon.mock().withArgs(sinon.match('req-value.json')));
 
-      mock.response(command, rules)(req, res);
+      response.response(command, rules)(req, res);
     });
 
     it('will support rule as map of command names to rules', function() {
@@ -78,19 +90,7 @@ describe('Mock', function() {
 
       mockReadFile(sinon.mock().withArgs(sinon.match('command-mark.json')));
 
-      mock.response(command, rules)(req, res);
-    });
-
-    it('will support changing of response dir', function() {
-      const req = {};
-      const res = stubJsonRes();
-      const command = 'command';
-      const rules = constant('mark');
-
-      mock.config({ responseDir: './another-response-dir' });
-      mockReadFile(sinon.mock().withArgs(sinon.match('another-response-dir/')));
-
-      mock.response(command, rules)(req, res);
+      response.response(command, rules)(req, res);
     });
   });
 });
