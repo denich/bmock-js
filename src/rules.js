@@ -4,18 +4,18 @@ var matchers = require('./matchers');
 
 export default {
   mark,
-  markBy,
   suite
 };
 
 function mark(marker) {
   return {
-    if: getIfMark(marker)
+    if: getIfMark(marker),
+    by: getByMark()
   };
 }
 
-function curryComposeMark(marker) {
-  return _.curry(composeMark)(marker);
+function getByMark() {
+  return getters;
 }
 
 function getIfMark(marker) {
@@ -24,10 +24,8 @@ function getIfMark(marker) {
   return wrapGetters(_.flow(composeMarkCurry, wrapMatchers));
 }
 
-function wrapObjValues(obj, wpapper) {
-  return _.mapValues(obj, (method) => {
-    return _.flow(method, wpapper);
-  });
+function curryComposeMark(marker) {
+  return _.curry(composeMark)(marker);
 }
 
 function wrapGetters(wpapper) {
@@ -38,14 +36,14 @@ function wrapMatchers(wpapper) {
   return wrapObjValues(matchers, wpapper);
 }
 
-function composeMark(marker, getter, condition) {
-  return _.flow(getter, condition, truthyResult(marker));
+function wrapObjValues(obj, wpapper) {
+  return _.mapValues(obj, (method) => {
+    return _.flow(method, wpapper);
+  });
 }
 
-function markBy(getter) {
-  return function(req) {
-    return getter(req);
-  };
+function composeMark(marker, getter, condition) {
+  return _.flow(getter, condition, truthyResult(marker));
 }
 
 function suite() {

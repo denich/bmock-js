@@ -23,114 +23,141 @@ describe('Rules', () => {
     rules = rewire('../src/rules');
   });
 
-  describe('mark if', () => {
+  describe('mark', function() {
     var mark;
 
     before(() => {
       mark = rules.mark;
     });
 
-    it('will return a function', function() {
-      mockGetters({
-        mockGetter: sinon.stub().returns(_.noop)
-      });
+    describe('if', () => {
 
-      mockMatchers({
-        mockMatcher: sinon.stub().returns(_.noop)
-      });
-
-      expect(mark('val').if.mockGetter('any').mockMatcher('any')).to.be.defined;
-    });
-
-    describe('execution', () => {
-      it('will pass execution param to getter', () => {
-        var getter = sinon.spy();
-
+      it('will return a function', function() {
         mockGetters({
-          mockGetter: sinon.stub().returns(getter)
+          mockGetter: sinon.stub().returns(_.noop)
         });
 
         mockMatchers({
           mockMatcher: sinon.stub().returns(_.noop)
         });
 
-        var sut = mark('any').if.mockGetter().mockMatcher();
-        var param = {};
-
-        sut(param);
-
-        expect(getter).to.have.been.calledWith(param);
+        expect(mark('val').if.mockGetter('any').mockMatcher('any')).to.be.instanceof(Function);
       });
 
-      it('will pass getter result to the matcher', () => {
-        var matcher = sinon.spy();
+      describe('execution', () => {
+        it('will pass execution param to getter', () => {
+          var getter = sinon.spy();
 
-        mockGetters({
-          mockGetter: sinon.stub().returns(_.constant('getterResult'))
+          mockGetters({
+            mockGetter: sinon.stub().returns(getter)
+          });
+
+          mockMatchers({
+            mockMatcher: sinon.stub().returns(_.noop)
+          });
+
+          var sut = mark('any').if.mockGetter().mockMatcher();
+          var param = {};
+
+          sut(param);
+
+          expect(getter).to.have.been.calledWith(param);
         });
 
-        mockMatchers({
-          mockMatcher: sinon.stub().returns(matcher)
+        it('will pass getter result to the matcher', () => {
+          var matcher = sinon.spy();
+
+          mockGetters({
+            mockGetter: sinon.stub().returns(_.constant('getterResult'))
+          });
+
+          mockMatchers({
+            mockMatcher: sinon.stub().returns(matcher)
+          });
+
+          var sut = mark('any').if.mockGetter().mockMatcher();
+
+          sut();
+
+          expect(matcher).to.have.been.calledWith('getterResult');
         });
 
-        var sut = mark('any').if.mockGetter().mockMatcher();
+        it('will return marker if matcher returns truthy', () => {
+          mockGetters({
+            mockGetter: sinon.stub().returns(_.noop)
+          });
 
-        sut();
+          mockMatchers({
+            mockMatcher: sinon.stub().returns(sinon.stub().returns(true))
+          });
 
-        expect(matcher).to.have.been.calledWith('getterResult');
+          var sut = mark('marker').if.mockGetter().mockMatcher();
+
+          var result = sut();
+
+          expect(result).to.be.equal('marker');
+        });
+
+        it('will return null if condition returns falsy', () => {
+          mockGetters({
+            mockGetter: sinon.stub().returns(_.noop)
+          });
+
+          mockMatchers({
+            mockMatcher: sinon.stub().returns(sinon.stub().returns(false))
+          });
+
+          var sut = mark('marker').if.mockGetter().mockMatcher();
+
+          var result = sut();
+
+          expect(result).to.be.null;
+        });
       });
+    });
 
-      it('will return marker if matcher returns truthy', () => {
+    describe('by', () => {
+
+      it('will return a function', function() {
         mockGetters({
           mockGetter: sinon.stub().returns(_.noop)
         });
 
-        mockMatchers({
-          mockMatcher: sinon.stub().returns(sinon.stub().returns(true))
-        });
+        var sut = mark().by.mockGetter('any');
 
-        var sut = mark('marker').if.mockGetter().mockMatcher();
-
-        var result = sut();
-
-        expect(result).to.be.equal('marker');
+        expect(sut).to.be.instanceof(Function);
       });
 
-      it('will return null if condition returns falsy', () => {
-        mockGetters({
-          mockGetter: sinon.stub().returns(_.noop)
+      describe('execution', function() {
+        it('will pass param to getter', () => {
+          var param = {};
+          var getter = sinon.spy();
+
+          mockGetters({
+            mockGetter: sinon.stub().returns(getter)
+          });
+
+          var sut = mark().by.mockGetter('any');
+
+          sut(param);
+
+          expect(getter).to.have.been.calledWith(param);
         });
 
-        mockMatchers({
-          mockMatcher: sinon.stub().returns(sinon.stub().returns(false))
+        it('will return getter result', () => {
+          var value = 'value';
+
+          mockGetters({
+            mockGetter: sinon.stub().returns(_.constant(value))
+          });
+
+          var sut = mark().by.mockGetter();
+
+          expect(sut()).to.be.equal('value');
         });
-
-        var sut = mark('marker').if.mockGetter().mockMatcher();
-
-        var result = sut();
-
-        expect(result).to.be.null;
       });
     });
-  });
 
-  describe('mark by', () => {
-    var markBy;
-
-    before(() => {
-      markBy = rules.markBy;
-    });
-
-    it('will return getter result', () => {
-      var value = 'value';
-      var req = {
-        prop: value
-      };
-
-      var sut = markBy(r => r.prop)(req);
-
-      expect(sut).to.be.equal(value);
-    });
   });
 
   describe('suite', () => {
