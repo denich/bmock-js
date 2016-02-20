@@ -1,47 +1,116 @@
 import chai from 'chai';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
-import rules from '../src/rules';
-import identity from 'lodash/utility/identity';
-import constant from 'lodash/utility/constant';
+import rewire from 'rewire';
+import _ from 'lodash';
+
+var rules;
 
 chai.use(sinonChai);
 
 const expect = chai.expect;
 
+function mockGetters(getters) {
+  rules.__set__('getters', getters);
+}
+
+function mockMatchers(matchers) {
+  rules.__set__('matchers', matchers);
+}
+
 describe('Rules', () => {
-  describe('mark', () => {
+  before(() => {
+    rules = rewire('../src/rules');
+  });
+
+  describe('mark if', () => {
     var mark;
 
     before(() => {
       mark = rules.mark;
     });
 
-    it('will pass getter result to the condition', () => {
-      var condition = sinon.spy();
-      var value = 'value';
-      var sut = mark('whatever', req => req.prop, condition);
+    it('will return a function', function() {
+      mockGetters({
+        mockGetter: sinon.stub().returns(_.noop)
+      });
 
-      sut({ prop: value });
+      mockMatchers({
+        mockMatcher: sinon.stub().returns(_.noop)
+      });
 
-      expect(condition).to.have.been.calledWith(value);
+      expect(mark('val').if.mockGetter('any').mockMatcher('any')).to.be.defined;
     });
 
-    it('will return marker if condition returns truthy', () => {
-      var marker = 'marker';
-      var req = {};
+    describe('execution', () => {
+      it('will pass execution param to getter', () => {
+        var getter = sinon.spy();
 
-      var sut = mark(marker, identity, constant(true));
+        mockGetters({
+          mockGetter: sinon.stub().returns(getter)
+        });
 
-      expect(sut(req)).to.be.equal(marker);
-    });
+        mockMatchers({
+          mockMatcher: sinon.stub().returns(_.noop)
+        });
 
-    it('will return null if condition returns falsy', () => {
-      const req = {};
+        var sut = mark('any').if.mockGetter().mockMatcher();
+        var param = {};
 
-      const sut = mark('marker', identity, constant(false));
+        sut(param);
 
-      expect(sut(req)).to.be.null;
+        expect(getter).to.have.been.calledWith(param);
+      });
+
+      it('will pass getter result to the matcher', () => {
+        var matcher = sinon.spy();
+
+        mockGetters({
+          mockGetter: sinon.stub().returns(_.constant('getterResult'))
+        });
+
+        mockMatchers({
+          mockMatcher: sinon.stub().returns(matcher)
+        });
+
+        var sut = mark('any').if.mockGetter().mockMatcher();
+
+        sut();
+
+        expect(matcher).to.have.been.calledWith('getterResult');
+      });
+
+      it('will return marker if matcher returns truthy', () => {
+        mockGetters({
+          mockGetter: sinon.stub().returns(_.noop)
+        });
+
+        mockMatchers({
+          mockMatcher: sinon.stub().returns(sinon.stub().returns(true))
+        });
+
+        var sut = mark('marker').if.mockGetter().mockMatcher();
+
+        var result = sut();
+
+        expect(result).to.be.equal('marker');
+      });
+
+      it('will return null if condition returns falsy', () => {
+        mockGetters({
+          mockGetter: sinon.stub().returns(_.noop)
+        });
+
+        mockMatchers({
+          mockMatcher: sinon.stub().returns(sinon.stub().returns(false))
+        });
+
+        var sut = mark('marker').if.mockGetter().mockMatcher();
+
+        var result = sut();
+
+        expect(result).to.be.null;
+      });
     });
   });
 
@@ -72,9 +141,9 @@ describe('Rules', () => {
     });
 
     it('will return result of first matched rules', () => {
-      var rule1 = constant(null);
-      var rule2 = constant('marker2');
-      var rule3 = constant('marker3');
+      var rule1 = _.constant(null);
+      var rule2 = _.constant('marker2');
+      var rule3 = _.constant('marker3');
       var req = {};
 
       var sut = suite(rule1, rule2, rule3);

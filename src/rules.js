@@ -1,6 +1,6 @@
-import flow from 'lodash/function/flow';
-import find from 'lodash/collection/find';
-import toArray from 'lodash/lang/toArray';
+import _ from 'lodash';
+var getters = require('./getters');
+var matchers = require('./matchers');
 
 export default {
   mark,
@@ -8,8 +8,38 @@ export default {
   suite
 };
 
-function mark(marker, getter, condition) {
-  return flow(getter, condition, truthyResult(marker));
+function mark(marker) {
+  return {
+    if: getIfMark(marker)
+  };
+}
+
+function curryComposeMark(marker) {
+  return _.curry(composeMark)(marker);
+}
+
+function getIfMark(marker) {
+  var composeMarkCurry = curryComposeMark(marker);
+
+  return wrapGetters(_.flow(composeMarkCurry, wrapMatchers));
+}
+
+function wrapObjValues(obj, wpapper) {
+  return _.mapValues(obj, (method) => {
+    return _.flow(method, wpapper);
+  });
+}
+
+function wrapGetters(wpapper) {
+  return wrapObjValues(getters, wpapper);
+}
+
+function wrapMatchers(wpapper) {
+  return wrapObjValues(matchers, wpapper);
+}
+
+function composeMark(marker, getter, condition) {
+  return _.flow(getter, condition, truthyResult(marker));
 }
 
 function markBy(getter) {
@@ -19,12 +49,12 @@ function markBy(getter) {
 }
 
 function suite() {
-  var rules = toArray(arguments);
+  var rules = _.toArray(arguments);
 
   return function(req) {
     var result = null;
 
-    find(rules, function(rule) {
+    _.find(rules, function(rule) {
       result = rule(req);
       return result;
     });
