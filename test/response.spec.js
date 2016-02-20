@@ -1,96 +1,105 @@
 import chai from 'chai';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
-import constant from 'lodash/utility/constant';
 import rewire from 'rewire';
 
-import noop from 'lodash/utility/noop';
-import property from 'lodash/utility/property';
+import _ from 'lodash';
 
 chai.use(sinonChai);
 
 const expect = chai.expect;
 
-describe('Mock', function() {
+describe('response', () => {
   var response;
+  var fileData;
+  var res;
 
-  before(function() {
+  before(() => {
     response = rewire('../src/response');
+    fileData = { response: 'response' };
+    res = stubJsonRes();
   });
 
-  describe('response', function() {
-    var fileData;
+  function mockReadFile(readFileSync) {
+    const mockFs = {
+      readFileSync: readFileSync.returns(JSON.stringify(fileData))
+    };
 
-    before(function() {
-      fileData = { response: 'response' };
-    });
+    response.__set__('fs', mockFs);
+  }
 
-    function mockReadFile(readFileSync) {
-      const mockFs = {
-        readFileSync: readFileSync.returns(JSON.stringify(fileData))
-      };
+  function stubJsonRes() {
+    return { json: sinon.spy() };
+  }
 
-      response.__set__('fs', mockFs);
-    }
+  it('will respond with read file data', () => {
+    const req = {};
+    const command = 'command';
+    const rules = _.noop;
 
-    function stubJsonRes() {
-      return { json: sinon.spy() };
-    }
+    mockReadFile(sinon.stub());
+    response(command, rules)(req, res);
+    expect(res.json).to.have.been.calledWith(fileData);
+  });
 
-    it('will respond with read file data', function() {
-      const req = {};
-      const res = stubJsonRes();
-      const command = 'command';
-      const rules = noop;
+  it('will use config base directory for file path', () => {
+    const req = {};
+    const command = 'command';
+    const rules = _.constant('mark');
 
-      mockReadFile(sinon.stub());
-      response.response(command, rules)(req, res);
-      expect(res.json).to.have.been.calledWith(fileData);
-    });
+    response.__set__('config', sinon.stub().returns({ responseDir: 'responseDir' }));
+    mockReadFile(sinon.mock().withArgs(sinon.match('responseDir')));
 
-    it('will use config base directory for file path', function() {
-      const req = {};
-      const res = stubJsonRes();
-      const command = 'command';
-      const rules = constant('mark');
+    response(command, rules)(req, res);
+  });
 
-      response.__set__('config', sinon.stub().returns({ responseDir: 'responseDir' }));
-      mockReadFile(sinon.mock().withArgs(sinon.match('responseDir')));
+  it('will combine file name as command and mark', () => {
+    const req = {};
+    const command = 'command';
+    const rules = _.constant('mark');
 
-      response.response(command, rules)(req, res);
-    });
+    mockReadFile(sinon.mock().withArgs(sinon.match('command-mark.json')));
 
-    it('will combine file name as command and mark', function() {
-      const req = {};
-      const res = stubJsonRes();
-      const command = 'command';
-      const rules = constant('mark');
+    response(command, rules)(req, res);
+  });
 
-      mockReadFile(sinon.mock().withArgs(sinon.match('command-mark.json')));
+  it('will support command name as function', () => {
+    const req = { prop: 'req-value' };
+    const command = _.property('prop');
+    const rules = _.noop;
 
-      response.response(command, rules)(req, res);
-    });
+    mockReadFile(sinon.mock().withArgs(sinon.match('req-value.json')));
 
-    it('will support command name as function', function() {
-      const req = { prop: 'req-value' };
-      const res = stubJsonRes();
-      const command = property('prop');
-      const rules = noop;
+    response(command, rules)(req, res);
+  });
 
-      mockReadFile(sinon.mock().withArgs(sinon.match('req-value.json')));
+  it('will support rule as map of command names to rules', () => {
+    const req = {};
+    const command = 'command';
+    const rules = { command: _.constant('mark') };
 
-      response.response(command, rules)(req, res);
-    });
+    mockReadFile(sinon.mock().withArgs(sinon.match('command-mark.json')));
 
-    it('will support rule as map of command names to rules', function() {
-      const req = {};
-      const res = stubJsonRes();
-      const command = 'command';
-      const rules = { command: constant('mark') };
+    response(command, rules)(req, res);
+  });
 
-      mockReadFile(sinon.mock().withArgs(sinon.match('command-mark.json')));
+  it('will return result of first matched rules', () => {
+    const req = {};
+    const command = 'command';
+    const rules = { command: _.constant('mark') };
 
-      response.response(command, rules)(req, res);
-    });
+    mockReadFile(sinon.mock().withArgs(sinon.match('command-mark.json')));
+
+    response(command, rules)(req, res);
+  });
+
+  it('will support rules suite usage', () => {
+    const rules = [_._.constant(null), _._.constant('marker2'), _._.constant('marker3')];
+    const req = {};
+    const command = 'command';
+
+    mockReadFile(sinon.mock().withArgs(sinon.match('marker2.json')));
+
+    response(command, rules)(req, res);
   });
 });

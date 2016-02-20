@@ -2,10 +2,7 @@ import _ from 'lodash';
 var getters = require('./getters');
 var matchers = require('./matchers');
 
-export default {
-  mark,
-  suite
-};
+export default mark;
 
 function mark(marker) {
   return {
@@ -44,21 +41,6 @@ function wrapObjValues(obj, wpapper) {
 
 function composeMark(marker, getter, condition) {
   return _.flow(getter, condition, truthyResult(marker));
-}
-
-function suite() {
-  var rules = _.toArray(arguments);
-
-  return function(req) {
-    var result = null;
-
-    _.find(rules, function(rule) {
-      result = rule(req);
-      return result;
-    });
-
-    return result;
-  };
 }
 
 function truthyResult(result) {

@@ -3,31 +3,35 @@ var config = require('./config');
 var path = require('path');
 var fs = require('fs');
 
-export default {
-  response: response
-};
+export default response;
 
 function response(command, rules) {
-  return function(req, res) {
-    res.json(JSON.parse(getResponse(req, toCommandName(command, req), rules)));
+  return (req, res) => {
+    var commandName = toCommandName(command, req);
+
+    sendResponse(res, useBaseDir(getFileName(commandName, getMark(rules, commandName, req))));
   };
-}
-
-function getResponse(req, commandName, rules) {
-  return fs.readFileSync(getResponsePath(getFileName(commandName, rules, req)));
-}
-
-function getFileName(commandName, rules, req) {
-  return commandName + makePostfix(getMark(rules, commandName, req));
 }
 
 function getMark(rules, commandName, req) {
   return getRule(rules, commandName)(req);
 }
 
+function sendResponse(res, path) {
+  res.json(JSON.parse(fs.readFileSync(path + '.json')));
+}
+
+function getFileName(commandName, mark) {
+  return commandName + makePostfix(mark);
+}
+
 function getRule(rules, commandName) {
   if (_.isFunction(rules)) {
     return rules;
+  }
+
+  if (_.isArray(rules)) {
+    return makeRulesSuite(rules);
   }
 
   return rules[commandName] || _.noop;
@@ -41,7 +45,20 @@ function toCommandName(command, req) {
   return _.isFunction(command) ? command(req) : command;
 }
 
-function getResponsePath(fileName) {
-  return path.join(config().responseDir, fileName + '.json');
+function useBaseDir(fileName) {
+  return path.join(config().responseDir, fileName);
+}
+
+function makeRulesSuite(rules) {
+  return function(req) {
+    var result = null;
+
+    _.find(rules, function(rule) {
+      result = rule(req);
+      return result;
+    });
+
+    return result;
+  };
 }
 
