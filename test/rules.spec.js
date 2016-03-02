@@ -20,7 +20,7 @@ describe('mark', function() {
   }
 
   before(() => {
-    mark = rewire('../src/rules');
+    mark = rewire('../src/mark');
   });
 
   describe('if', () => {

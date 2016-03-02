@@ -73,7 +73,7 @@ describe('response', () => {
     response(command, rules)(req, res);
   });
 
-  it('will support rule as map of command names to rules', () => {
+  it('will support rule as map of command names to mark', () => {
     const req = {};
     const command = 'command';
     const rules = { command: _.constant('mark') };
@@ -83,7 +83,7 @@ describe('response', () => {
     response(command, rules)(req, res);
   });
 
-  it('will return result of first matched rules', () => {
+  it('will return result of first matched mark', () => {
     const req = {};
     const command = 'command';
     const rules = { command: _.constant('mark') };
@@ -93,7 +93,7 @@ describe('response', () => {
     response(command, rules)(req, res);
   });
 
-  it('will support rules suite usage', () => {
+  it('will support mark suite usage', () => {
     const rules = [_._.constant(null), _._.constant('marker2'), _._.constant('marker3')];
     const req = {};
     const command = 'command';
