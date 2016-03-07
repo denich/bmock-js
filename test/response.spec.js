@@ -94,12 +94,21 @@ describe('response', () => {
   });
 
   it('will support mark suite usage', () => {
-    const rules = [_._.constant(null), _._.constant('marker2'), _._.constant('marker3')];
+    const rules = [_.constant(null), _.constant('marker2'), _.constant('marker3')];
     const req = {};
     const command = 'command';
 
     mockReadFile(sinon.mock().withArgs(sinon.match('marker2.json')));
 
     response(command, rules)(req, res);
+  });
+
+  it('will return command name as a result if no rules specified', function() {
+    const req = {};
+    const command = 'command';
+
+    mockReadFile(sinon.mock().withArgs(sinon.match('command.json')));
+
+    response(command)(req, res);
   });
 });

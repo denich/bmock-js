@@ -26,6 +26,10 @@ function getFileName(commandName, mark) {
 }
 
 function getRule(rules, commandName) {
+  if (_.isUndefined(rules)) {
+    return _.noop;
+  }
+
   if (_.isFunction(rules)) {
     return rules;
   }
