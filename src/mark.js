@@ -1,6 +1,6 @@
 import _ from 'lodash';
-var getters = require('./getters');
-var matchers = require('./matchers');
+const getters = require('./getters');
+const matchers = require('./matchers');
 
 export default mark;
 
@@ -16,9 +16,7 @@ function getByMark() {
 }
 
 function getIfMark(marker) {
-  var composeMarkCurry = curryComposeMark(marker);
-
-  return wrapGetters(_.flow(composeMarkCurry, wrapMatchers));
+  return wrapGetters(_.flow(curryComposeMark(marker), wrapMatchers));
 }
 
 function curryComposeMark(marker) {
@@ -34,9 +32,7 @@ function wrapMatchers(wpapper) {
 }
 
 function wrapObjValues(obj, wpapper) {
-  return _.mapValues(obj, (method) => {
-    return _.flow(method, wpapper);
-  });
+  return _.mapValues(obj, (method) => _.flow(method, wpapper));
 }
 
 function composeMark(marker, getter, condition) {
@@ -44,7 +40,5 @@ function composeMark(marker, getter, condition) {
 }
 
 function truthyResult(result) {
-  return function(isTruthy) {
-    return isTruthy ? result : null;
-  };
+  return isTruthy => isTruthy ? result : null;
 }

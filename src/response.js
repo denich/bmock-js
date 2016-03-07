@@ -1,13 +1,13 @@
 import _ from 'lodash';
-var config = require('./config');
-var path = require('path');
-var fs = require('fs');
+const config = require('./config');
+const path = require('path');
+const fs = require('fs');
 
 export default response;
 
 function response(command, rules) {
   return (req, res) => {
-    var commandName = toCommandName(command, req);
+    const commandName = toCommandName(command, req);
 
     sendResponse(res, useBaseDir(getFileName(commandName, getMark(rules, commandName, req))));
   };
@@ -17,12 +17,12 @@ function getMark(rules, commandName, req) {
   return getRule(rules, commandName)(req);
 }
 
-function sendResponse(res, path) {
-  res.json(JSON.parse(fs.readFileSync(path + '.json')));
+function sendResponse(res, filePath) {
+  res.json(JSON.parse(fs.readFileSync(`${filePath}.json`)));
 }
 
 function getFileName(commandName, mark) {
-  return commandName + makePostfix(mark);
+  return mark ? `${commandName}-${mark}` : commandName;
 }
 
 function getRule(rules, commandName) {
@@ -41,10 +41,6 @@ function getRule(rules, commandName) {
   return rules[commandName] || _.noop;
 }
 
-function makePostfix(mark) {
-  return mark ? '-' + mark : '';
-}
-
 function toCommandName(command, req) {
   return _.isFunction(command) ? command(req) : command;
 }
@@ -54,10 +50,10 @@ function useBaseDir(fileName) {
 }
 
 function makeRulesSuite(rules) {
-  return function(req) {
-    var result = null;
+  return req => {
+    let result = null;
 
-    _.find(rules, function(rule) {
+    _.find(rules, rule => {
       result = rule(req);
       return result;
     });

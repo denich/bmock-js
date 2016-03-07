@@ -4,10 +4,9 @@ import getters from '../src/getters';
 const expect = chai.expect;
 
 describe('Getters', () => {
-
   describe('body property', () => {
     it('will return req body property value', () => {
-      var req = {
+      const req = {
         body: {
           prop: 'value'
         }
@@ -19,7 +18,7 @@ describe('Getters', () => {
 
   describe('query property', () => {
     it('will return query property value', () => {
-      var req = {
+      const req = {
         query: {
           prop: 'value'
         }
@@ -31,7 +30,7 @@ describe('Getters', () => {
 
   describe('parameter', () => {
     it('will return parameter value', () => {
-      var req = {
+      const req = {
         params: {
           name: 'value'
         }

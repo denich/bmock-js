@@ -1,10 +1,10 @@
-import property from 'lodash/utility/property';
-import flow from 'lodash/function/flow';
+import property from 'lodash/property';
+import flow from 'lodash/flow';
 
 export default {
-  bodyProp: bodyProp,
-  queryProp: queryProp,
-  param: param
+  bodyProp,
+  queryProp,
+  param
 };
 
 function bodyProp(propPath) {

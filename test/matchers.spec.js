@@ -6,13 +6,13 @@ const expect = chai.expect;
 describe('Matchers', () => {
   describe('count', () => {
     it('will be true if received same count array', () => {
-      var arr = [1, 2, 3];
+      const arr = [1, 2, 3];
 
       expect(matchers.count(3)(arr)).to.be.true;
     });
 
     it('will be false if receive diff count array', () => {
-      var arr = [1, 2];
+      const arr = [1, 2];
 
       expect(matchers.count(3)(arr)).to.be.false;
     });

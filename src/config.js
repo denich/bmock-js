@@ -1,7 +1,7 @@
 import _ from 'lodash';
-var bodyParser = require('body-parser');
+const bodyParser = require('body-parser');
 
-var _config = {
+let _config = {
   responseDir: './data',
   format: {
     request: 'json'

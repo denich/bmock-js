@@ -1,8 +1,8 @@
-var webpack = require('webpack');
-var RewirePlugin = require('rewire-webpack');
-var path = require('path');
-var env = require('yargs').argv.mode;
-var fs = require('fs');
+const webpack = require('webpack');
+const RewirePlugin = require('rewire-webpack');
+const path = require('path');
+const env = require('yargs').argv.mode;
+const fs = require('fs');
 
 const libraryName = 'bmock';
 
@@ -31,25 +31,28 @@ module.exports = {
       }
     ]
   },
-  plugins: plugins(env)
+  plugins: plugins()
 };
 
-function plugins(env) {
-  var plugins = [
+function isBuild() {
+  return env === 'build';
+}
+
+function getEnvPlugins() {
+  if (isBuild()) {
+    return [new webpack.optimize.UglifyJsPlugin({ minimize: true })];
+  }
+  return [new RewirePlugin()];
+}
+
+function plugins() {
+  return [
     new webpack.BannerPlugin('require("source-map-support").install();',
       {
         raw: true,
         entryOnly: false
       })
-  ];
-
-  if (env === 'build') {
-    plugins.push(new webpack.optimize.UglifyJsPlugin({ minimize: true }));
-  } else {
-    plugins.push(new RewirePlugin());
-  }
-
-  return plugins;
+  ].concat(getEnvPlugins(plugins));
 }
 
 function externals() {

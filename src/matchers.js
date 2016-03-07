@@ -1,9 +1,4 @@
-import size from 'lodash/collection/size';
-import includes from 'lodash/collection/includes';
-import flow from 'lodash/function/flow';
-import partial from 'lodash/function/partial';
-import partialRight from 'lodash/function/partialRight';
-import isEqual from 'lodash/lang/isEqual';
+import _ from 'lodash';
 
 export default {
   inList,
@@ -13,17 +8,17 @@ export default {
 };
 
 function count(value) {
-  return flow(size, equal(value));
+  return _.flow(_.size, equal(value));
 }
 
 function inList(valueArray) {
-  return partial(includes, valueArray);
+  return _.partial(_.includes, valueArray);
 }
 
 function contain(value) {
-  return partialRight(includes, value);
+  return _.partialRight(_.includes, value);
 }
 
 function equal(value) {
-  return partial(isEqual, value);
+  return _.partial(_.isEqual, value);
 }

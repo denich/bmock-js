@@ -8,8 +8,8 @@ chai.use(sinonChai);
 
 const expect = chai.expect;
 
-describe('mark', function() {
-  var mark;
+describe('mark', () => {
+  let mark;
 
   function mockGetters(getters) {
     mark.__set__('getters', getters);
@@ -24,8 +24,7 @@ describe('mark', function() {
   });
 
   describe('if', () => {
-
-    it('will return a function', function() {
+    it('will return a function', () => {
       mockGetters({
         mockGetter: sinon.stub().returns(_.noop)
       });
@@ -39,7 +38,7 @@ describe('mark', function() {
 
     describe('execution', () => {
       it('will pass execution param to getter', () => {
-        var getter = sinon.spy();
+        const getter = sinon.spy();
 
         mockGetters({
           mockGetter: sinon.stub().returns(getter)
@@ -49,8 +48,8 @@ describe('mark', function() {
           mockMatcher: sinon.stub().returns(_.noop)
         });
 
-        var sut = mark('any').if.mockGetter().mockMatcher();
-        var param = {};
+        const sut = mark('any').if.mockGetter().mockMatcher();
+        const param = {};
 
         sut(param);
 
@@ -58,7 +57,7 @@ describe('mark', function() {
       });
 
       it('will pass getter result to the matcher', () => {
-        var matcher = sinon.spy();
+        const matcher = sinon.spy();
 
         mockGetters({
           mockGetter: sinon.stub().returns(_.constant('getterResult'))
@@ -68,7 +67,7 @@ describe('mark', function() {
           mockMatcher: sinon.stub().returns(matcher)
         });
 
-        var sut = mark('any').if.mockGetter().mockMatcher();
+        const sut = mark('any').if.mockGetter().mockMatcher();
 
         sut();
 
@@ -84,9 +83,9 @@ describe('mark', function() {
           mockMatcher: sinon.stub().returns(sinon.stub().returns(true))
         });
 
-        var sut = mark('marker').if.mockGetter().mockMatcher();
+        const sut = mark('marker').if.mockGetter().mockMatcher();
 
-        var result = sut();
+        const result = sut();
 
         expect(result).to.be.equal('marker');
       });
@@ -100,9 +99,9 @@ describe('mark', function() {
           mockMatcher: sinon.stub().returns(sinon.stub().returns(false))
         });
 
-        var sut = mark('marker').if.mockGetter().mockMatcher();
+        const sut = mark('marker').if.mockGetter().mockMatcher();
 
-        var result = sut();
+        const result = sut();
 
         expect(result).to.be.null;
       });
@@ -110,27 +109,26 @@ describe('mark', function() {
   });
 
   describe('by', () => {
-
-    it('will return a function', function() {
+    it('will return a function', () => {
       mockGetters({
         mockGetter: sinon.stub().returns(_.noop)
       });
 
-      var sut = mark().by.mockGetter('any');
+      const sut = mark().by.mockGetter('any');
 
       expect(sut).to.be.instanceof(Function);
     });
 
-    describe('execution', function() {
+    describe('execution', () => {
       it('will pass param to getter', () => {
-        var param = {};
-        var getter = sinon.spy();
+        const param = {};
+        const getter = sinon.spy();
 
         mockGetters({
           mockGetter: sinon.stub().returns(getter)
         });
 
-        var sut = mark().by.mockGetter('any');
+        const sut = mark().by.mockGetter('any');
 
         sut(param);
 
@@ -138,17 +136,16 @@ describe('mark', function() {
       });
 
       it('will return getter result', () => {
-        var value = 'value';
+        const value = 'value';
 
         mockGetters({
           mockGetter: sinon.stub().returns(_.constant(value))
         });
 
-        var sut = mark().by.mockGetter();
+        const sut = mark().by.mockGetter();
 
         expect(sut()).to.be.equal('value');
       });
     });
   });
-
 });

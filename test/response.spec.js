@@ -10,9 +10,9 @@ chai.use(sinonChai);
 const expect = chai.expect;
 
 describe('response', () => {
-  var response;
-  var fileData;
-  var res;
+  let response;
+  let fileData;
+  let res;
 
   before(() => {
     response = rewire('../src/response');
@@ -103,7 +103,7 @@ describe('response', () => {
     response(command, rules)(req, res);
   });
 
-  it('will return command name as a result if no rules specified', function() {
+  it('will return command name as a result if no rules specified', () => {
     const req = {};
     const command = 'command';
 
