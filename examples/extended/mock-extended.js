@@ -5,7 +5,7 @@ var bmock = require('../../index.js');
 var mark = bmock.mark;
 var response = bmock.response;
 
-bmock.config({
+bmock.config(app, {
   responseDir: path.join(__dirname, './data')
 });
 
