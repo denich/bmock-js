@@ -1,24 +1,21 @@
 var path = require('path');
 var app = require('../server');
+var b = require('../../index.js');
 
-var bmock = require('../../index.js');
-var mark = bmock.mark;
-var response = bmock.response;
-
-bmock.config(app, {
+b.config(app, {
   responseDir: path.join(__dirname, './data')
 });
 
 var rules = {
-  deposit: mark('error').if.queryProp('amount').equal('200'),
-  purchase: mark().by.queryProp('type'),
+  deposit: b.mark('error').if.queryProp('amount').equal('200'),
+  purchase: b.mark().by.queryProp('type'),
   registration: [
-    mark('error').if.queryProp('name').equal('invalid'),
-    mark('unfinished').if.queryProp('hobby').equal('none')
+    b.mark('error').if.queryProp('name').equal('invalid'),
+    b.mark('unfinished').if.queryProp('hobby').equal('none')
   ]
 };
 
-app.use('/api/:command*', response(getRequestCommand, rules));
+app.use('/api/:command*', b.response(getRequestCommand, rules));
 
 function getRequestCommand(req) {
   return req.param.command;

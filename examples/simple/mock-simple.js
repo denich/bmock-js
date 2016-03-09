@@ -1,13 +1,10 @@
 var path = require('path');
 var app = require('../server');
+var b = require('../../index.js');
 
-var bmock = require('../../index.js');
-var mark = bmock.mark;
-var response = bmock.response;
-
-bmock.config(app, {
+b.config(app, {
   responseDir: path.join(__dirname, './data')
 });
 
-app.use('/api/validate', response('validate', mark('error').if.queryProp('valid').equal('false')));
-app.use('/api/purchase', response('purchase'));
+app.use('/api/validate', b.response('validate', b.mark('error').if.queryProp('valid').equal('false')));
+app.use('/api/purchase', b.response('purchase'));
